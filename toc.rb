@@ -5,20 +5,21 @@ class ProductionLineSimulator
 		line = ProductionLine.new(:stations => 4)
 		print line
 		while (inventory_remaining > 0)
-			dice = Dice.roll_for_station(1)
-			if (inventory_remaining >= dice)
-				line.stations[0].add_to_inventory(dice)
-				inventory_remaining = inventory_remaining - dice
+			line.stations.each_with_index do |station, index|
+				dice = station.get_inventory_adjustment
+				if index == 0 then
+					inventory_to_move = [dice, inventory_remaining].min
+					station.add_to_inventory(inventory_to_move)
+					inventory_remaining = inventory_remaining - inventory_to_move
+				else
+					inventory_to_move = line.stations[index - 1].remove_from_inventory_upto(dice)
+					station.add_to_inventory(inventory_to_move)
+
+				end
+				# print line
 			end
 
 			print line
-			for station in 1..line.size - 1
-				dice = Dice.roll_for_station(station + 1)
-				inventory_to_move = line.stations[station - 1].remove_from_inventory_upto(dice)
-				line.stations[station].add_to_inventory(inventory_to_move)
-
-				print line
-			end
 		end
 		puts line.report
 	end
@@ -26,12 +27,12 @@ end
 
 class ProductionLine
 	attr_reader :stations
+
 	def initialize(options)
-		@number_of_stations = options[:stations]
-		@stations = Array.new
-		for station in 1..@number_of_stations
-			@stations << Station.new(station)
-		end
+		puts "Creating ProductionLine with #{options[:stations]} stations"
+		@stations = Array.new(options[:stations]) {|index|
+			Station.new(index + 1)
+		}
 	end
 
 	def to_s
@@ -53,14 +54,18 @@ class ProductionLine
 	end
 
 	def size
-		@number_of_stations
+		@stations.size
 	end
 end
 
 class Dice
-	def self.roll_for_station(station_id)
+	def initialize(station_id)
+		@station_id = station_id
+	end
+
+	def roll
 		dice = 1 + rand(6)
-		puts "Threw #{dice} for station-#{station_id}"
+		puts "\nThrew #{dice} for station-#{@station_id + 1}"
 
 		return dice
 	end
@@ -73,6 +78,11 @@ class Station
 		@station_id = id
 		@size = 0
 		@score = 0
+		@dice = Dice.new(@station_id)
+	end
+
+	def get_inventory_adjustment
+		return @dice.roll
 	end
 
 	def to_s
