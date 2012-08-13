@@ -1,42 +1,45 @@
 class ProductionLineSimulator
-	def run
-		total_inventory = inventory_remaining = 100
-
-		line = ProductionLine.new(:stations => 4)
-		print line
-		while (inventory_remaining > 0)
-			line.stations.each_with_index do |station, index|
-				dice = station.get_inventory_adjustment
-				if index == 0 then
-					inventory_to_move = [dice, inventory_remaining].min
-					station.add_to_inventory(inventory_to_move)
-					inventory_remaining = inventory_remaining - inventory_to_move
-				else
-					inventory_to_move = line.stations[index - 1].remove_from_inventory_upto(dice)
-					station.add_to_inventory(inventory_to_move)
-
-				end
-				# print line
+	def run(line, total_inventory)
+		@unprocessed_inventory = total_inventory
+		@line = line
+		puts @line
+		while (@unprocessed_inventory > 0)
+			@line.stations.each_with_index do |station, index|
+				move_inventory_to_station(station, index)
 			end
 
-			print line
+			puts "#{@unprocessed_inventory} items remaining"
+			puts @line
 		end
-		puts line.report
+		puts @line.to_report
 	end
+
+	def move_inventory_to_station(station, index)
+		dice = station.get_inventory_adjustment
+		if index == 0 then
+			inventory_to_move = [dice, @unprocessed_inventory].min
+			station.add_to_inventory(inventory_to_move)
+			@unprocessed_inventory = @unprocessed_inventory - inventory_to_move
+		else
+			inventory_to_move = @line.stations[index - 1].remove_from_inventory_upto(dice)
+			station.add_to_inventory(inventory_to_move)
+
+		end
+	end
+
 end
 
 class ProductionLine
 	attr_reader :stations
 
 	def initialize(options)
-		puts "Creating ProductionLine with #{options[:stations]} stations"
 		@stations = Array.new(options[:stations]) {|index|
 			Station.new(index + 1)
 		}
 	end
 
 	def to_s
-		s = ''
+		s = 'Inventory: '
 		@stations.each do |station|
 			s << station.to_s
 		end
@@ -44,8 +47,8 @@ class ProductionLine
 		s
 	end
 
-	def report
-		s = "\nReport: "
+	def to_report
+		s = 'Report: '
 		@stations.each do |station|
 			s << station.report
 		end
@@ -53,9 +56,6 @@ class ProductionLine
 		s
 	end
 
-	def size
-		@stations.size
-	end
 end
 
 class Dice
@@ -65,7 +65,7 @@ class Dice
 
 	def roll
 		dice = 1 + rand(6)
-		puts "\nThrew #{dice} for station-#{@station_id + 1}"
+		puts "Rolled #{dice} for station-#{@station_id}"
 
 		return dice
 	end
@@ -86,13 +86,13 @@ class Station
 	end
 
 	def to_s
-		return "#{station_id}: _ " if (@size == 0)
+		return sprintf("#{station_id}:__ ") if (@size == 0)
 
-		return "#{station_id}: #{size} "
+		return sprintf("#{station_id}:%-2d ", @size)
 	end
 
 	def report
-		return "#{station_id}: #{score} "
+		return sprintf("%d:%-2d ", @station_id, @score)
 	end
 
 	def add_to_inventory(amount)
@@ -112,4 +112,5 @@ class Station
 	end
 end
 
-ProductionLineSimulator.new.run
+line = ProductionLine.new(:stations => 4)
+ProductionLineSimulator.new.run(line, 100)
