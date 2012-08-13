@@ -1,9 +1,12 @@
 class ProductionLineSimulator
-	def run(line, total_inventory)
+	def initialize(line, total_inventory)
 		@unprocessed_inventory = total_inventory
 		@line = line
 		puts @line
-		while (@unprocessed_inventory > 0)
+	end
+
+	def run()
+		while (!@line.is_finished?)
 			@line.stations.each_with_index do |station, index|
 				move_inventory_to_station(station, index)
 			end
@@ -56,6 +59,9 @@ class ProductionLine
 		s
 	end
 
+	def is_finished?
+		@stations.last.size >= 100
+	end
 end
 
 class Dice
@@ -110,7 +116,9 @@ class Station
 
 		return capacity
 	end
+
+
 end
 
 line = ProductionLine.new(:stations => 4)
-ProductionLineSimulator.new.run(line, 100)
+ProductionLineSimulator.new(line, 100).run
