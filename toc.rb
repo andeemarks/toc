@@ -39,7 +39,7 @@ class ProductionLine
 	end
 
 	def header
-		"Bin " + ("Stn Score " * @stations.size)
+		"Bin " + (Station.header * @stations.size)
 	end
 
 	private
@@ -69,5 +69,5 @@ class ProductionLine
 end
 
 
-line = ProductionLine.new(:number_stations => 4, :inventory => 100)
+line = ProductionLine.new(:number_stations => 3, :inventory => 100)
 ProductionLineSimulator.new(line).run

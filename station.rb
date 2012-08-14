@@ -30,6 +30,10 @@ class Station
     return sprintf("%3d (%3d) ", @size, @score)
   end
 
+  def self.header
+    "Stn Score "
+  end
+
   private
 
   def get_amount_to_move
