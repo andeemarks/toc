@@ -4,7 +4,7 @@ class Station
 
   AVERAGE_AMOUNT_TO_MOVE = 3.5
 
-  def initialize(id)
+  def initialize
     @size = @score = 0
   end
 

@@ -22,7 +22,7 @@ class ProductionLine
 
 	def initialize(options)
 		@stations = Array.new(options[:number_stations]) {|index|
-			Station.new(index)
+			Station.new
 		}
 		@capacity = options[:inventory]
 		@bin = PartsBin.new(@capacity)
