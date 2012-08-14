@@ -11,8 +11,8 @@ class ProductionLineSimulator
 				move_inventory_to_station(station, index)
 			end
 
-			puts "#{@unprocessed_inventory} items remaining"
 			puts @line
+			# print " #{@unprocessed_inventory} items remaining"
 		end
 		puts @line.to_report
 	end
@@ -24,9 +24,11 @@ class ProductionLineSimulator
 			station.add_to_inventory(inventory_to_move)
 			@unprocessed_inventory = @unprocessed_inventory - inventory_to_move
 		else
-			inventory_to_move = @line.stations[index - 1].remove_from_inventory_upto(dice)
-			station.add_to_inventory(inventory_to_move)
-
+			previous_station = @line.stations[index - 1]
+			if (!previous_station.is_empty?) then
+				inventory_to_move = previous_station.remove_from_inventory_upto(dice)
+				station.add_to_inventory(inventory_to_move)
+			end
 		end
 	end
 
@@ -42,7 +44,7 @@ class ProductionLine
 	end
 
 	def to_s
-		s = 'Inventory: '
+		s = ''
 		@stations.each do |station|
 			s << station.to_s
 		end
@@ -71,13 +73,13 @@ class Dice
 
 	def roll
 		dice = 1 + rand(6)
-		puts "Rolled #{dice} for station-#{@station_id}"
+		# puts "Rolled #{dice} for station-#{@station_id}"
 
 		return dice
 	end
 end
 
-class Station 
+class Station
 	attr_reader :station_id, :size, :score
 
 	def initialize(id)
@@ -92,9 +94,9 @@ class Station
 	end
 
 	def to_s
-		return sprintf("#{station_id}:__ ") if (@size == 0)
+		return sprintf("__ ") if (@size == 0)
 
-		return sprintf("#{station_id}:%-2d ", @size)
+		return sprintf("%-2d ", @size)
 	end
 
 	def report
@@ -103,11 +105,7 @@ class Station
 
 	def add_to_inventory(amount)
 		@size = @size + amount
-		add_to_score(amount - 3.5)
-	end
-
-	def add_to_score(score)
-		@score = @score + score
+		@score = @score + (amount - 3.5)
 	end
 
 	def remove_from_inventory_upto(maximum)
@@ -115,6 +113,10 @@ class Station
 		@size = @size - capacity
 
 		return capacity
+	end
+
+	def is_empty?
+		return @size <= 0
 	end
 
 
