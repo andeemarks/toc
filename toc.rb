@@ -1,33 +1,35 @@
 class ProductionLineSimulator
-	def initialize(line, total_inventory)
-		@unprocessed_inventory = total_inventory
+	def initialize(line)
 		@line = line
-		puts @line
 	end
 
 	def run()
+		puts @line
 		while (!@line.is_finished?)
-			@line.stations.each_with_index do |station, index|
-				move_inventory_to_station(station, index)
-			end
+			simulate_one_cycle
 
 			puts @line
-			# print " #{@unprocessed_inventory} items remaining"
+		end
+	end
+
+	def simulate_one_cycle
+		@line.stations.each_with_index do |station, index|
+			move_inventory_to_station(station, index)
 		end
 	end
 
 	def move_inventory_to_station(station, index)
 		dice = station.get_inventory_adjustment
+		source = @line.get_source_station_for_id(index)
 		if (index == 0) then
-			if (@unprocessed_inventory > 0) then
-				inventory_to_move = [dice, @unprocessed_inventory].min
+			if (@line.remaining_inventory > 0) then
+				inventory_to_move = [dice, @line.remaining_inventory].min
 				station.add_to_inventory(inventory_to_move)
-				@unprocessed_inventory = @unprocessed_inventory - inventory_to_move
+				@line.remaining_inventory = @line.remaining_inventory - inventory_to_move
 			end
 		else
-			previous_station = @line.stations[index - 1]
-			if (!previous_station.is_empty?) then
-				inventory_to_move = previous_station.remove_from_inventory_upto(dice)
+			if (!source.is_empty?) then
+				inventory_to_move = source.remove_from_inventory_upto(dice)
 				station.add_to_inventory(inventory_to_move)
 			end
 		end
@@ -42,10 +44,17 @@ class ProductionLine
 		@stations = Array.new(options[:stations]) {|index|
 			Station.new(index + 1)
 		}
+		@bin = PartsBin.new(options[:inventory])
+	end
+
+	def get_source_station_for_id(station_id)
+		return @bin if station_id == 0
+
+		return @stations[station_id - 1]
 	end
 
 	def to_s
-		s = ''
+		s = @bin.to_s
 		@stations.each do |station|
 			s << station.to_s
 		end
@@ -55,6 +64,14 @@ class ProductionLine
 
 	def is_finished?
 		@stations.last.size >= 100
+	end
+
+	def remaining_inventory
+		@bin.size
+	end
+
+	def remaining_inventory=(new_value)
+		@bin.size = new_value
 	end
 end
 
@@ -72,7 +89,8 @@ class Dice
 end
 
 class Station
-	attr_reader :station_id, :size, :score
+	attr_reader :station_id, :score
+	attr_accessor :size
 
 	def initialize(id)
 		@station_id = id
@@ -86,9 +104,9 @@ class Station
 	end
 
 	def to_s
-		return sprintf("    (%3d) ", @score) if (@size == 0)
+		return sprintf("    (Sc: %3d) ", @score) if (@size == 0)
 
-		return sprintf("%3d (%3d) ", @size, @score)
+		return sprintf("%3d (Sc: %3d) ", @size, @score)
 	end
 
 	def add_to_inventory(amount)
@@ -110,5 +128,16 @@ class Station
 
 end
 
-line = ProductionLine.new(:stations => 4)
-ProductionLineSimulator.new(line, 100).run
+class PartsBin < Station
+	def initialize(size)
+		@size = size
+	end
+
+	def to_s
+		return sprintf("Bin:     ") if @size <= 0
+		return sprintf("Bin: %3d ", @size)
+	end
+end
+
+line = ProductionLine.new(:stations => 4, :inventory => 100)
+ProductionLineSimulator.new(line).run
