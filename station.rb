@@ -4,7 +4,6 @@ class Station
 
   def initialize(id)
     @size = @score = 0
-    @dice = Dice.new
   end
 
   def add_to_inventory(amount)
@@ -44,7 +43,6 @@ end
 class PartsBin < Station
   def initialize(size)
     @size = size
-    @dice = Dice.new
   end
 
   def to_s
