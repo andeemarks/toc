@@ -6,24 +6,9 @@ class ProductionLineSimulator
 	def run()
 		puts @line
 		while (!@line.is_finished?)
-			simulate_one_cycle
+			@line.run_one_cycle
 
 			puts @line
-		end
-	end
-
-	def simulate_one_cycle
-		@line.stations.each_with_index do |station, index|
-			move_inventory_to_station(station, index)
-		end
-	end
-
-	def move_inventory_to_station(station, index)
-		dice = station.get_inventory_adjustment
-		source = @line.get_source_station_for_id(index)
-		if (!source.is_empty?) then
-			inventory_to_move = source.remove_from_inventory_upto(dice)
-			station.add_to_inventory(inventory_to_move)
 		end
 	end
 
@@ -39,6 +24,27 @@ class ProductionLine
 		@bin = PartsBin.new(options[:inventory])
 	end
 
+	def run_one_cycle
+		@stations.each_with_index do |station, index|
+			move_inventory_to_station(station, index)
+		end
+	end
+
+	def is_finished?
+		@stations.last.size >= 100
+	end
+
+	private
+
+	def move_inventory_to_station(station, index)
+		dice = station.get_inventory_adjustment
+		source = get_source_station_for_id(index)
+		if (!source.is_empty?) then
+			inventory_to_move = source.remove_from_inventory_upto(dice)
+			station.add_to_inventory(inventory_to_move)
+		end
+	end
+
 	def get_source_station_for_id(station_id)
 		return @bin if station_id == 0
 
@@ -52,18 +58,6 @@ class ProductionLine
 		end
 
 		s
-	end
-
-	def is_finished?
-		@stations.last.size >= 100
-	end
-
-	def remaining_inventory
-		@bin.size
-	end
-
-	def remaining_inventory=(new_value)
-		@bin.size = new_value
 	end
 end
 
