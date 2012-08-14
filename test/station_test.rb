@@ -1,19 +1,27 @@
 require 'minitest/spec'
+require 'minitest/autorun'
+require '../lib/station'
 
 describe Station do
   before do
     @station = Station.new
   end
 
-  # describe "when asked about cheeseburgers" do
-  #   it "should respond positively" do
-  #     @meme.i_can_has_cheezburger?.must_equal "OHAI!"
-  #   end
-  # end
+  describe "when constructed" do
+    it "should have a default size and score" do
+      @station.size.must_equal 0
+      @station.score.must_equal 0
+    end
+  end
 
-  # describe "when asked about blending possibilities" do
-  #   it "won't say no" do
-  #     @meme.does_it_blend?.wont_match /^no/i
-  #   end
-  # end
+  describe "#has_inventory?" do
+    it "should return true if station size > 0" do
+      @station.has_inventory?.must_equal false
+
+      @station.add_to_inventory(3)
+      @station.size.must_be :>, 0
+
+      @station.has_inventory?.must_equal true
+    end
+  end
 end
