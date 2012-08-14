@@ -14,15 +14,16 @@ class ProductionLineSimulator
 			puts @line
 			# print " #{@unprocessed_inventory} items remaining"
 		end
-		puts @line.to_report
 	end
 
 	def move_inventory_to_station(station, index)
 		dice = station.get_inventory_adjustment
-		if index == 0 then
-			inventory_to_move = [dice, @unprocessed_inventory].min
-			station.add_to_inventory(inventory_to_move)
-			@unprocessed_inventory = @unprocessed_inventory - inventory_to_move
+		if (index == 0) then
+			if (@unprocessed_inventory > 0) then
+				inventory_to_move = [dice, @unprocessed_inventory].min
+				station.add_to_inventory(inventory_to_move)
+				@unprocessed_inventory = @unprocessed_inventory - inventory_to_move
+			end
 		else
 			previous_station = @line.stations[index - 1]
 			if (!previous_station.is_empty?) then
@@ -47,15 +48,6 @@ class ProductionLine
 		s = ''
 		@stations.each do |station|
 			s << station.to_s
-		end
-
-		s
-	end
-
-	def to_report
-		s = 'Report: '
-		@stations.each do |station|
-			s << station.report
 		end
 
 		s
@@ -94,13 +86,9 @@ class Station
 	end
 
 	def to_s
-		return sprintf("__ ") if (@size == 0)
+		return sprintf("    (%3d) ", @score) if (@size == 0)
 
-		return sprintf("%-2d ", @size)
-	end
-
-	def report
-		return sprintf("%d:%-2d ", @station_id, @score)
+		return sprintf("%3d (%3d) ", @size, @score)
 	end
 
 	def add_to_inventory(amount)
