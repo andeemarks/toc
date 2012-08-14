@@ -23,7 +23,8 @@ class ProductionLine
 		@stations = Array.new(options[:stations]) {|index|
 			Station.new(index + 1)
 		}
-		@bin = PartsBin.new(options[:inventory])
+		@capacity = options[:inventory]
+		@bin = PartsBin.new(@capacity)
 	end
 
 	def run_one_cycle
@@ -33,16 +34,15 @@ class ProductionLine
 	end
 
 	def is_finished?
-		@stations.last.size >= 100
+		@stations.last.size >= @capacity
 	end
 
 	private
 
 	def move_inventory_to_station(station, index)
-		dice = station.get_inventory_adjustment
 		source = get_source_station_for_id(index)
-		if (!source.is_empty?) then
-			inventory_to_move = source.remove_from_inventory_upto(dice)
+		if (source.has_inventory?) then
+			inventory_to_move = source.remove_from_inventory
 			station.add_to_inventory(inventory_to_move)
 		end
 	end

@@ -1,17 +1,15 @@
 require 'dice'
 
 class Station
-  attr_reader :station_id, :score
-  attr_accessor :size
+  attr_reader :station_id, :score, :size
 
   def initialize(id)
     @station_id = id
-    @size = 0
-    @score = 0
+    @size = @score = 0
     @dice = Dice.new(@station_id)
   end
 
-  def get_inventory_adjustment
+  def get_amount_to_move
     return @dice.roll
   end
 
@@ -25,15 +23,16 @@ class Station
     @score = @score + (amount - 3.5)
   end
 
-  def remove_from_inventory_upto(maximum)
-    capacity = [maximum, @size].min
-    @size = @size - capacity
+  def remove_from_inventory
+    preferred_amount = get_amount_to_move
+    allowed_amount = [preferred_amount, @size].min
+    @size = @size - allowed_amount
 
-    return capacity
+    return allowed_amount
   end
 
-  def is_empty?
-    return @size <= 0
+  def has_inventory?
+    return @size > 0
   end
 
 
@@ -42,10 +41,11 @@ end
 class PartsBin < Station
   def initialize(size)
     @size = size
+    @dice = Dice.new(0)
   end
 
   def to_s
-    return sprintf("Bin:     ") if @size <= 0
-    return sprintf("Bin: %3d ", @size)
+    return sprintf("Bin:    .") if @size <= 0
+    return sprintf("Bin: %3d.", @size)
   end
 end

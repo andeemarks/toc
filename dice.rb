@@ -5,10 +5,10 @@ class Dice
   end
 
   def roll
-    dice = 1 + rand(6)
+    roll = 1 + rand(6)
     # puts "Rolled #{dice} for station-#{@station_id}"
 
-    return dice
+    return roll
   end
 end
 
