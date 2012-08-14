@@ -6,6 +6,7 @@ class ProductionLineSimulator
 	end
 
 	def run
+		puts @line.header
 		puts @line
 		while (!@line.is_finished?)
 			@line.run_one_cycle
@@ -20,7 +21,7 @@ class ProductionLine
 	attr_reader :stations
 
 	def initialize(options)
-		@stations = Array.new(options[:stations]) {|index|
+		@stations = Array.new(options[:number_stations]) {|index|
 			Station.new(index)
 		}
 		@capacity = options[:inventory]
@@ -35,6 +36,10 @@ class ProductionLine
 
 	def is_finished?
 		@stations.last.size >= @capacity
+	end
+
+	def header
+		"Bin " + ("Stn Score " * @stations.size)
 	end
 
 	private
@@ -64,5 +69,5 @@ class ProductionLine
 end
 
 
-line = ProductionLine.new(:stations => 4, :inventory => 100)
+line = ProductionLine.new(:number_stations => 4, :inventory => 100)
 ProductionLineSimulator.new(line).run

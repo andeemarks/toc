@@ -26,8 +26,8 @@ class Station
   end
 
   def to_s
-    return sprintf("    (Sc: %3d) ", @score) if (@size == 0)
-    return sprintf("%3d (Sc: %3d) ", @size, @score)
+    return sprintf("    (%3d) ", @score) if (@size == 0)
+    return sprintf("%3d (%3d) ", @size, @score)
   end
 
   private
@@ -45,7 +45,7 @@ class PartsBin < Station
   end
 
   def to_s
-    return sprintf("Bin:    .") if @size <= 0
-    return sprintf("Bin: %3d.", @size)
+    return sprintf("   .") if @size <= 0
+    return sprintf("%3d.", @size)
   end
 end
