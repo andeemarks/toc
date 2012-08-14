@@ -9,15 +9,6 @@ class Station
     @dice = Dice.new(@station_id)
   end
 
-  def get_amount_to_move
-    return @dice.roll
-  end
-
-  def to_s
-    return sprintf("    (Sc: %3d) ", @score) if (@size == 0)
-    return sprintf("%3d (Sc: %3d) ", @size, @score)
-  end
-
   def add_to_inventory(amount)
     @size = @size + amount
     @score = @score + (amount - 3.5)
@@ -35,6 +26,16 @@ class Station
     return @size > 0
   end
 
+  def to_s
+    return sprintf("    (Sc: %3d) ", @score) if (@size == 0)
+    return sprintf("%3d (Sc: %3d) ", @size, @score)
+  end
+
+  private
+
+  def get_amount_to_move
+    return @dice.roll
+  end
 
 end
 

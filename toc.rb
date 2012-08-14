@@ -39,11 +39,11 @@ class ProductionLine
 
 	private
 
-	def move_inventory_to_station(station, index)
+	def move_inventory_to_station(destination, index)
 		source = get_source_station_for_id(index)
 		if (source.has_inventory?) then
 			inventory_to_move = source.remove_from_inventory
-			station.add_to_inventory(inventory_to_move)
+			destination.add_to_inventory(inventory_to_move)
 		end
 	end
 
