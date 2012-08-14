@@ -1,12 +1,11 @@
 require 'dice'
 
 class Station
-  attr_reader :station_id, :score, :size
+  attr_reader :score, :size
 
   def initialize(id)
-    @station_id = id
     @size = @score = 0
-    @dice = Dice.new(@station_id)
+    @dice = Dice.new
   end
 
   def add_to_inventory(amount)
@@ -42,7 +41,7 @@ end
 class PartsBin < Station
   def initialize(size)
     @size = size
-    @dice = Dice.new(0)
+    @dice = Dice.new
   end
 
   def to_s

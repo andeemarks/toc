@@ -5,7 +5,7 @@ class ProductionLineSimulator
 		@line = line
 	end
 
-	def run()
+	def run
 		puts @line
 		while (!@line.is_finished?)
 			@line.run_one_cycle
@@ -21,7 +21,7 @@ class ProductionLine
 
 	def initialize(options)
 		@stations = Array.new(options[:stations]) {|index|
-			Station.new(index + 1)
+			Station.new(index)
 		}
 		@capacity = options[:inventory]
 		@bin = PartsBin.new(@capacity)
