@@ -1,4 +1,3 @@
-require 'dice'
 
 class Station
   attr_reader :score, :size
@@ -37,7 +36,7 @@ class Station
   private
 
   def get_amount_to_move
-    return @dice.roll
+    return 1 + rand(6)
   end
 
 end
