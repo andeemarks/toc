@@ -21,17 +21,9 @@ class ProductionLineSimulator
 	def move_inventory_to_station(station, index)
 		dice = station.get_inventory_adjustment
 		source = @line.get_source_station_for_id(index)
-		if (index == 0) then
-			if (@line.remaining_inventory > 0) then
-				inventory_to_move = [dice, @line.remaining_inventory].min
-				station.add_to_inventory(inventory_to_move)
-				@line.remaining_inventory = @line.remaining_inventory - inventory_to_move
-			end
-		else
-			if (!source.is_empty?) then
-				inventory_to_move = source.remove_from_inventory_upto(dice)
-				station.add_to_inventory(inventory_to_move)
-			end
+		if (!source.is_empty?) then
+			inventory_to_move = source.remove_from_inventory_upto(dice)
+			station.add_to_inventory(inventory_to_move)
 		end
 	end
 
