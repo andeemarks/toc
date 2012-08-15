@@ -3,6 +3,7 @@ require_relative 'station'
 
 class ProductionLine
 	attr_reader :stations, :capacity, :bin
+	attr_writer :stations
 
 	def initialize(options)
 		capacity = options[:inventory]

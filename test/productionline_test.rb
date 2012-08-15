@@ -32,6 +32,7 @@ describe ProductionLine do
 
   describe "#is_finished?" do
     it "should be true when the last station is at capacity" do
+      @line.stations = Array.new(1, PartsBin.new(50))
       @line.is_finished?.must_equal true
     end
   end
