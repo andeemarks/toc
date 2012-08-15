@@ -2,7 +2,7 @@
 class Station
   attr_reader :score, :size
 
-  AVERAGE_AMOUNT_TO_MOVE = 3.5
+  AVERAGE_INVENTORY_TO_ADD = 3.5
 
   def initialize
     @size = @score = 0
@@ -10,7 +10,7 @@ class Station
 
   def add_to_inventory(amount)
     @size = @size + amount
-    @score = @score + (amount - AVERAGE_AMOUNT_TO_MOVE)
+    @score = @score + (amount - AVERAGE_INVENTORY_TO_ADD)
   end
 
   def remove_from_inventory
