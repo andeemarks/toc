@@ -42,5 +42,25 @@ describe ProductionLine do
     it "will return the PartsBin if we're on the first station" do
       @line.get_source_station_for_id(0).must_equal @line.bin
     end
+
+    it "will return the previous bin if we're on the first station" do
+      station = Station.new
+      @line.stations = Array.new(2, station)
+      @line.get_source_station_for_id(2).must_equal station
+    end
+  end
+
+  describe "#to_s" do
+    it "will delegate to the Station#to_s" do
+      mock_station = MiniTest::Mock.new
+      @line.stations = Array.new(1, mock_station)
+
+      mock_station.expect :to_s, "   (  0)", nil
+
+      @line.to_s
+
+      assert mock_station.verify
+
+    end
   end
 end
