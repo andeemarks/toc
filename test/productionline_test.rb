@@ -19,6 +19,14 @@ describe ProductionLine do
 
       @line.capacity.must_equal 50
     end
+
+    it "should reject a negative inventory" do
+      lambda{ProductionLine.new({:number_stations => 3, :inventory => -10})}.must_raise(ArgumentError)
+    end
+
+    it "should reject a negative number of stations" do
+      lambda{ProductionLine.new({:number_stations => -3, :inventory => 50})}.must_raise(ArgumentError)
+    end
   end
 
   describe "#is_finished?" do
