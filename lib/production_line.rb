@@ -2,7 +2,7 @@ require_relative 'station'
 
 
 class ProductionLine
-	attr_reader :stations
+	attr_reader :stations, :capacity
 
 	def initialize(options)
 		@stations = Array.new(options[:number_stations]) {|index|
