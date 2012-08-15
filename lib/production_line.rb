@@ -2,13 +2,19 @@ require_relative 'station'
 
 
 class ProductionLine
-	attr_reader :stations, :capacity
+	attr_reader :stations, :capacity, :bin
 
 	def initialize(options)
+		capacity = options[:inventory]
+		raise ArgumentError if capacity.to_i <= 0
+
+		number_stations = options[:number_stations]
+		raise ArgumentError if number_stations.to_i <= 0
+
 		@stations = Array.new(options[:number_stations]) {|index|
 			Station.new
 		}
-		@capacity = options[:inventory]
+		@capacity = capacity
 		@bin = PartsBin.new(@capacity)
 	end
 
@@ -43,12 +49,7 @@ class ProductionLine
 	end
 
 	def to_s
-		s = @bin.to_s
-		@stations.each do |station|
-			s << station.to_s
-		end
-
-		s
+		@stations.inject(@bin.to_s) {|start, station| start << station.to_s}
 	end
 end
 

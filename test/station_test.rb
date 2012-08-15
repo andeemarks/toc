@@ -1,6 +1,6 @@
 require 'minitest/spec'
 require 'minitest/autorun'
-require '../lib/station'
+require 'station'
 
 describe Station do
   before do
