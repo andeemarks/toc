@@ -33,8 +33,6 @@ class ProductionLine
 		"Bin " + (Station.header * @stations.size)
 	end
 
-	private
-
 	def move_inventory_to_station(destination, index)
 		source = get_source_station_for_id(index)
 		if (source.has_inventory?) then

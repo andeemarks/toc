@@ -32,8 +32,15 @@ describe ProductionLine do
 
   describe "#is_finished?" do
     it "should be true when the last station is at capacity" do
+      @line.is_finished?.must_equal false
       @line.stations = Array.new(1, PartsBin.new(50))
       @line.is_finished?.must_equal true
+    end
+  end
+
+  describe "#get_source_station_for_id" do
+    it "will return the PartsBin if we're on the first station" do
+      @line.get_source_station_for_id(0).must_equal @line.bin
     end
   end
 end
